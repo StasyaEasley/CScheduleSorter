@@ -32,7 +32,7 @@ for sublist in h2_list:
         course_comp_list.append(sublist[1])
     elif sublist[0] == 'Grading basis':
         grade_basis_list.append(sublist[1])
-    elif sublist[0] == 'Enrollment Requirement':
+    elif sublist[0] == 'Enrollment requirement':
         enroll_req_list.append(sublist[1])
 
 csc_list = []
@@ -58,11 +58,11 @@ for i in range(len(description_list)):
     description_file.write(career_list[i])
     description_file.write("\t")
     description_file.write(spring_fall_list[i])
-    """description_file.write("\t")
+    description_file.write("\t")
     try:
         description_file.write(enroll_req_list[i])
     except IndexError:
-        enroll_req_list = """""
+        enroll_req_list = []
     description_file.write("\t")
     try:
         description_file.write(grade_basis_list[i])
