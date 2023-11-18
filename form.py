@@ -5,6 +5,7 @@ import pandas as pd
 
 large_font = ("Rupee", 35)
 small_font = ("Helvetica", 20)
+extra_small_font = ("Helvetica", 15)
 
 
 class tkinterApp(tk.Tk):
@@ -12,7 +13,7 @@ class tkinterApp(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
 
         self.container = tk.Frame(self)
-        self.container.pack(side="top", fill="both", expand=True)
+        self.container.pack(side="left", fill="both", expand=True)
 
         self.frames = {}
 
@@ -40,21 +41,29 @@ class StartPage(tk.Frame):
         label = ttk.Label(self, text="CS Schedule Sorter", font=large_font)
         label.pack(side=tk.TOP)
 
-        imag_start = tk.PhotoImage(file='start_button.png')
-        photoimage1 = imag_start.subsample(5, 5)
+        schedule = tk.PhotoImage(file='schedule.png')
+        photoimage3 = schedule.subsample(3, 3)
+        sche = tk.Label(self, image=photoimage3)
+        sche.photoimage3 = photoimage3  # To keep a reference to the image
 
-        button1 = ttk.Button(self, image=photoimage1,
-                             command=lambda: controller.show_frame(Page1))
-        button1.image = photoimage1
-        button1.pack(pady=10)
+        sche.pack(side=tk.TOP, padx=30, pady=10)
 
         imag_end = tk.PhotoImage(file='exit_button.png')
         photoimage2 = imag_end.subsample(5, 5)
 
-        button2 = ttk.Button(self, image=photoimage2,
-                             command=controller.destroy)
+        button2 = tk.Button(self, image=photoimage2, height=63, width=142,
+                            command=controller.destroy)
         button2.image = photoimage2
-        button2.pack(pady=10)
+        button2.pack(side="left",anchor="center", padx=57)
+
+        imag_start = tk.PhotoImage(file='start_button.png')
+        photoimage1 = imag_start.subsample(5, 5)
+
+        button1 = tk.Button(self, height=63, width=142,
+                            image=photoimage1,
+                            command=lambda: controller.show_frame(Page1), )
+        button1.image = photoimage1
+        button1.pack(side="left", anchor="center")
 
 
 def next_button_click(controller, lb):
@@ -158,27 +167,28 @@ class Page4(tk.Frame):
         self.home_button = ttk.Button(self, text="Home",
                                       command=lambda: controller.show_frame(
                                           StartPage))
-        self.home_button.pack(pady=10)
+        self.home_button.pack(padx=2, anchor=tk.SW)
 
         self.back_button = ttk.Button(self, text="Back",
                                       command=lambda: controller.show_frame(
                                           Page1))
-        self.back_button.pack(pady=10)
+        self.back_button.pack(padx=2, anchor=tk.SW)
 
         self.description_frame = tk.Frame(self)
         self.description_frame.pack(pady=10)
 
         self.description_label = ttk.Label(self.description_frame, text="",
-                                           wraplength=200, justify="left",
-                                           font=small_font)
+                                           wraplength=400, justify="left",
+                                           font=extra_small_font)
         self.description_label.pack(pady=10)
 
         self.description_buttons = []
 
     def update_which(self, indices):
         descriptions_df = pd.read_csv('merged_data.tsv', sep='\t',
-                                      index_col='Class')
-        descriptions_dict = descriptions_df.set_index('Class Name')['Description'].to_dict()
+                                      index_col='Class Name')
+        descriptions_dict = (
+            descriptions_df.set_index('Class')['Description'].to_dict())
 
         for index in indices:
             class_code = descriptions_df.index[index]
@@ -190,7 +200,7 @@ class Page4(tk.Frame):
         not_selected_values = [classes[i] for i in range(len(classes)) if
                                i not in indices]
 
-        self.label["text"] = "Selected: {}\nNext Steps: {}".format(
+        self.label["text"] = "Taken: {}\nNext Steps: {}".format(
             ", ".join(selected_values),
             ", ".join(not_selected_values))
 
@@ -202,15 +212,15 @@ class Page4(tk.Frame):
         for value in not_selected_values:
             button = ttk.Button(self, text=value,
                                 command=lambda v=value: self.show_description(
-                                    v, descriptions_df))
-            button.pack(pady=5)
+                                    v, descriptions_dict))
+            button.pack(side="left", padx=5)
             self.description_buttons.append(button)
 
         print(descriptions_dict)
 
     def show_description(self, value, descriptions_dict):
         description = get_class_description(value, descriptions_dict)
-        self.description_label["text"] = description
+        self.description_label["text"] = f"{value}: {description}"
 
 
 def get_class_description(class_name, descriptions_dict):
