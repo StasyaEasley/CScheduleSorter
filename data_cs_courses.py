@@ -85,12 +85,6 @@ for sublist in ps_list:
     elif 'Main Campus' in sublist[0]:
         spring_fall_list.append(sublist[1])
 
-team = pd.DataFrame(list(
-    zip(csc_list, description_list, career_list, spring_fall_list,
-        enroll_req_list, grade_basis_list, course_comp_list)),
-    columns=['Class', 'Description', 'Career', 'Offered', "Enrollment "
-                                                          "requirement",
-             'Grading Basis', 'Course Components'])
 
 description_file = open("description.tsv", "w")
 for i in range(len(description_lists)):
@@ -115,16 +109,26 @@ description_file.close()
 
 
 ps3_list = []
+class_name_list = []
 all_ps3 = soup.find_all("p", class_="s3")
 for p in all_ps3:
     this_text = p.text
     ps3_list.append(this_text.split(":"))
+for sublist in ps3_list:
+    class_name_list.append(sublist[1])
 
 new_file = open("course_info.tsv", "w")
 for sublist in ps3_list:
     new_file.write("\t".join(sublist) + "\n")
 new_file.close()
 
+team = pd.DataFrame(list(
+    zip(csc_list, class_name_list, description_list, career_list,
+        spring_fall_list,enroll_req_list, grade_basis_list, course_comp_list,
+        equivalent_list)),
+    columns=['Class', 'Class Name', 'Description', 'Career', 'Offered',
+             'Enrollment Requirement','Grading Basis', 'Course Components',
+             'Equivalent To'])
 
 # combines tsv files
 cour = pd.read_csv('course_info.tsv', sep='\t')
@@ -132,4 +136,8 @@ desc = pd.read_csv('description.tsv', sep='\t')
 merged_data = pd.merge(cour, desc, on='CSC 101')
 merged_data.to_csv('merged_data.tsv', sep='\t', index=True)
 
-
+merged_file = open("merged_data.tsv", "w")
+merged_file.write("\t".join(team.columns) + "\n")
+for i in range(len(description_lists)):
+    merged_file.write("\t".join(str(item) for item in team.iloc[i]) + "\n")
+merged_file.close()
