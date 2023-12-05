@@ -4,6 +4,7 @@ from tkinter import ttk
 import pandas as pd
 
 large_font = ("Rupee", 35)
+medium_font = ("Helvetica", 27)
 small_font = ("Helvetica", 20)
 extra_small_font = ("Helvetica", 15)
 
@@ -12,17 +13,21 @@ class tkinterApp(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
 
+        self.class_dict = None
         self.container = tk.Frame(self)
         self.container.pack(side="left", fill="both", expand=True)
 
         self.frames = {}
 
-        for F in (StartPage, Page1, Page2, Page3, Page4):
+        for F in (StartPage, Page1, Page3, Page4):
             frame = F(self.container, self)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
 
         self.show_frame(StartPage)
+
+    def set_class_dict(self, my_dict):
+        self.class_dict = my_dict
 
     def show_frame(self, cont):
         frame = self.frames[cont]
@@ -54,7 +59,7 @@ class StartPage(tk.Frame):
         button2 = tk.Button(self, image=photoimage2, height=63, width=142,
                             command=controller.destroy)
         button2.image = photoimage2
-        button2.pack(side="left",anchor="center", padx=57)
+        button2.pack(side="left", anchor="center", padx=65)
 
         imag_start = tk.PhotoImage(file='start_button.png')
         photoimage1 = imag_start.subsample(5, 5)
@@ -72,6 +77,12 @@ def next_button_click(controller, lb):
     controller.show_frame(Page4)
 
 
+def new_button(controller, lb):
+    indices = check_selections(controller, lb)
+    controller.frames[Page4].update_2(indices)
+    controller.show_frame(Page4)
+
+
 class Page1(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -84,76 +95,56 @@ class Page1(tk.Frame):
 
         data = ("CSC 110", "CSC 120", "CSC 210", "CSC 144", "CSC 244")
 
-        lb = Listbox(self, height=5, selectmode='multiple')
+        lb = Listbox(self, height=5, selectmode='multiple', font=medium_font)
         for num in data:
             lb.insert(END, num)
-        lb.pack(anchor=tk.CENTER, padx=5)
+        lb.pack(anchor=tk.CENTER, fill=BOTH)
 
         home = ttk.Button(self, text="Home",
                           command=lambda: controller.show_frame(StartPage))
-        home.pack(pady=5)
+        home.pack(side="left", pady=5, padx=2)
 
         next_ = ttk.Button(self, text="Next",
                            command=lambda: next_button_click(controller,
                                                              lb))
-        next_.pack(pady=5)
+        next_.pack(side="left", pady=5, padx=20)
 
         other = ttk.Button(self, text="Click here if all taken",
                            command=lambda: controller.show_frame(Page3))
-        other.pack(padx=2, anchor=tk.NE)
-
-
-# third window frame page2
-class Page2(tk.Frame):
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        label = ttk.Label(self, text="other",
-                          font=small_font)
-        label.pack(padx=5, pady=10, side=tk.TOP)
-        var = StringVar()
-        var.set("one")
-        data = "other", "other"
-
-        lb = Listbox(self, height=5, selectmode='multiple')
-        for num in data:
-            lb.insert(END, num)
-        lb.pack(padx=5, pady=10, side=tk.RIGHT)
-
-        button2 = ttk.Button(self, text="Home",
-                             command=lambda: controller.show_frame(StartPage))
-        button2.pack(padx=5, pady=10, side=tk.LEFT)
+        other.pack(padx=2, side="right")
 
 
 class Page3(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        label = ttk.Label(self, text="Select all that you have taken \n     "
-                                     "  or are currently taking.",
+        label = ttk.Label(self, text="Select all that you have taken or are "
+                                     "currently taking.",
                           font=small_font)
         label.pack(anchor="n")
         var = StringVar()
         var.set("one")
         data = ("CSC 252", "CSC 335", "CSC 345", "CSC 352", "CSC 380")
-        lb = Listbox(self, height=5, selectmode='multiple')
+        lb = Listbox(self, height=5, selectmode='multiple', font=medium_font)
         for num in data:
             lb.insert(END, num)
-        lb.pack(anchor=tk.CENTER, padx=5)
+        lb.pack(anchor=tk.CENTER, fill=BOTH)
 
         button2 = ttk.Button(self, text="Home",
                              command=lambda: controller.show_frame(StartPage))
-        button2.pack(padx=2, anchor=tk.CENTER)
+        button2.pack(side="left", pady=5, padx=2)
 
         back_ = ttk.Button(self, text="Back",
                            command=lambda: controller.show_frame(Page1))
-        back_.pack(padx=2, anchor=tk.CENTER)
+        back_.pack(side="left", pady=5, padx=2)
 
         next_ = ttk.Button(self, text="Next",
-                           command=lambda: controller.show_frame(Page1))
-        next_.pack(padx=2, anchor=tk.CENTER)
+                           command=lambda: new_button(controller,
+                                                      lb))
+        next_.pack(side="left", pady=5, padx=20)
 
         other = ttk.Button(self, text="Click here if all taken",
-                           command=lambda: controller.show_frame(Page3))
-        other.pack(padx=2, anchor=tk.NE)
+                           command=lambda: controller.show_frame(Page1))
+        other.pack(padx=2, side="right")
 
 
 class Page4(tk.Frame):
@@ -164,15 +155,12 @@ class Page4(tk.Frame):
         self.label = ttk.Label(self, text="", font=small_font)
         self.label.pack(anchor="n")
 
-        self.home_button = ttk.Button(self, text="Home",
-                                      command=lambda: controller.show_frame(
-                                          StartPage))
-        self.home_button.pack(padx=2, anchor=tk.SW)
-
-        self.back_button = ttk.Button(self, text="Back",
-                                      command=lambda: controller.show_frame(
-                                          Page1))
-        self.back_button.pack(padx=2, anchor=tk.SW)
+        ttk.Button(self, text="Home",
+                   command=lambda: controller.show_frame(StartPage)).pack(
+            padx=2, anchor=tk.SW)
+        ttk.Button(self, text="Back",
+                   command=lambda: controller.show_frame(Page1)).pack(padx=2,
+                                                                      anchor=tk.SW)
 
         self.description_frame = tk.Frame(self)
         self.description_frame.pack(pady=10)
@@ -184,51 +172,59 @@ class Page4(tk.Frame):
 
         self.description_buttons = []
 
-    def update_which(self, indices):
-        descriptions_df = pd.read_csv('merged_data.tsv', sep='\t',
-                                      index_col='Class Name')
-        descriptions_dict = (
-            descriptions_df.set_index('Class')['Description'].to_dict())
+    def update_data(self, indices, classes):
+        descriptions = pd.read_csv('merged_data.tsv', sep='\t')
+        descriptions_dict = descriptions.set_index('Class').to_dict(
+            orient='index')
 
-        for index in indices:
-            class_code = descriptions_df.index[index]
-            description = get_class_description(class_code, descriptions_dict)
-            self.label["text"] = description
-
-        classes = ("CSC 110", "CSC 120", "CSC 210", "CSC 144", "CSC 244")
-        selected_values = [classes[index] for index in indices]
+        selected_values = [classes[i] for i in indices]
         not_selected_values = [classes[i] for i in range(len(classes)) if
                                i not in indices]
 
         self.label["text"] = "Taken: {}\nNext Steps: {}".format(
-            ", ".join(selected_values),
-            ", ".join(not_selected_values))
+            ", ".join(selected_values), ", ".join(not_selected_values))
 
-        # Remove existing buttons
         for button in self.description_buttons:
             button.destroy()
 
-        # Create buttons for not selected values
         for value in not_selected_values:
-            button = ttk.Button(self, text=value,
-                                command=lambda v=value: self.show_description(
-                                    v, descriptions_dict))
+            button = ttk.Button(self, text=value, command=lambda
+                v=value: self.show_description(v, descriptions_dict))
             button.pack(side="left", padx=5)
             self.description_buttons.append(button)
 
-        print(descriptions_dict)
+    def update_which(self, indices):
+        self.update_data(indices, ["CSC 110", "CSC 120", "CSC 210", "CSC 144",
+                                   "CSC 244"])
 
-    def show_description(self, value, descriptions_dict):
-        description = get_class_description(value, descriptions_dict)
-        self.description_label["text"] = f"{value}: {description}"
+    def update_2(self, indices):
+        self.update_data(indices, ["CSC 252", "CSC 335", "CSC 345", "CSC 352",
+                                   "CSC 380"])
+
+    def show_description(self, value, my_dict):
+        if value in my_dict:
+            info = my_dict[value]
+            full_description = f"Class: {value}\n\n" + "\n".join(
+                f"{header}: {info[header]}\n" for header in info)
+
+            xxx_small_font = ("Helvetica", 13)
+            self.description_label.configure(font=xxx_small_font)
+
+            self.description_label["text"] = full_description
+        else:
+            self.label["text"] = f"No information available for {value}"
+            self.description_label["text"] = ""
 
 
-def get_class_description(class_name, descriptions_dict):
-    return descriptions_dict.get(class_name, "No description available.")
+descriptions_df = pd.read_csv('merged_data.tsv', sep='\t', index_col='Career')
 
+class_dict = {}
 
-# Define a function to get the description for a class
-
+for index, row_data in descriptions_df.iterrows():
+    class_name = row_data['Class']
+    class_info = {header: row_data[header] for header in row_data.index}
+    class_dict[class_name] = class_info
 
 app = tkinterApp()
+app.set_class_dict(class_dict)
 app.mainloop()

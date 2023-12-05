@@ -8,7 +8,7 @@ ps_list = []
 all_ps = soup.find_all("p")
 for p in all_ps:
     this_text = p.text
-    ps_list.append(this_text.split(":"))
+    ps_list.append(this_text.split(":", 1))
 
 ps_list.pop(153)
 
@@ -21,7 +21,7 @@ description_lists = []
 # description string
 for h2 in all_hs:
     this_text = h2.text
-    split_text = this_text.split(":")
+    split_text = this_text.split(":", 1)
     if split_text[0] == 'Description':
         if current_description is not None:
             description_lists.append(current_description)
@@ -45,7 +45,6 @@ for sublist in description_lists:
         if "Equivalent to" not in sublist:
             sublist.extend(['Equivalent to', 'None'])
 
-
 description_list = []
 career_list = []
 course_comp_list = []
@@ -56,26 +55,20 @@ equivalent_list = []
 for sublist in description_lists:
     if sublist[0] == 'Description':
         description_list.append(sublist[1])
-    if 'Description' in sublist:
-        index = sublist.index('Enrollment requirement')
-        enroll_req_list.append(sublist[index + 1])
-    if 'Description' in sublist:
-        index = sublist.index('Career')
-        career_list.append(sublist[index + 1])
-    if 'Description' in sublist:
-        index = sublist.index('Grading basis')
-        grade_basis_list.append(sublist[index + 1])
-    if 'Description' in sublist:
-        index = sublist.index('Course Components')
-        course_comp_list.append(sublist[index + 1])
-    if 'Description' in sublist:
-        index = sublist.index('Equivalent to')
-        equivalent_list.append(sublist[index + 1])
-
-enroll_req_list[22] = "Completion of CSC 210 and CSC 252"
-enroll_req_list[23] = ("Advanced Standing: Engineering. ECE 275 and MATH 243. "
-                       "Students may not have completed or be enrolled in CSC"
-                       " 345.")
+        for keyword in ['Enrollment requirement', 'Career', 'Grading basis',
+                        'Course Components', 'Equivalent to']:
+            if keyword in sublist:
+                index = sublist.index(keyword)
+                if keyword == 'Enrollment requirement':
+                    enroll_req_list.append(sublist[index + 1])
+                elif keyword == 'Career':
+                    career_list.append(sublist[index + 1])
+                elif keyword == 'Grading basis':
+                    grade_basis_list.append(sublist[index + 1])
+                elif keyword == 'Course Components':
+                    course_comp_list.append(sublist[index + 1])
+                elif keyword == 'Equivalent to':
+                    equivalent_list.append(sublist[index + 1])
 
 csc_list = []
 spring_fall_list = []
@@ -85,35 +78,18 @@ for sublist in ps_list:
     elif 'Main Campus' in sublist[0]:
         spring_fall_list.append(sublist[1])
 
-
-description_file = open("description.tsv", "w")
-for i in range(len(description_lists)):
-    description_file.write(csc_list[i])
-    description_file.write("\t")
-    description_file.write(description_list[i])
-    description_file.write("\t")
-    description_file.write(enroll_req_list[i])
-    description_file.write("\t")
-    description_file.write(career_list[i])
-    description_file.write("\t")
-    description_file.write(spring_fall_list[i])
-    description_file.write("\t")
-    description_file.write(grade_basis_list[i])
-    description_file.write("\t")
-    description_file.write(course_comp_list[i])
-    description_file.write("\t")
-    description_file.write(equivalent_list[i])
-    description_file.write("\n")
-
-description_file.close()
-
+with open("description.tsv", "w") as description_file:
+    for values in zip(csc_list, description_list, enroll_req_list, career_list,
+                      spring_fall_list, grade_basis_list, course_comp_list,
+                      equivalent_list):
+        description_file.write("\t".join(map(str, values)) + "\n")
 
 ps3_list = []
 class_name_list = []
 all_ps3 = soup.find_all("p", class_="s3")
 for p in all_ps3:
     this_text = p.text
-    ps3_list.append(this_text.split(":"))
+    ps3_list.append(this_text.split(":", 1))
 for sublist in ps3_list:
     class_name_list.append(sublist[1])
 
@@ -124,10 +100,10 @@ new_file.close()
 
 team = pd.DataFrame(list(
     zip(csc_list, class_name_list, description_list, career_list,
-        spring_fall_list,enroll_req_list, grade_basis_list, course_comp_list,
+        spring_fall_list, enroll_req_list, grade_basis_list, course_comp_list,
         equivalent_list)),
     columns=['Class', 'Class Name', 'Description', 'Career', 'Offered',
-             'Enrollment Requirement','Grading Basis', 'Course Components',
+             'Enrollment Requirement', 'Grading Basis', 'Course Components',
              'Equivalent To'])
 
 # combines tsv files
