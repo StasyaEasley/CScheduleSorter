@@ -19,7 +19,8 @@ class tkinterApp(tk.Tk):
 
         self.frames = {}
 
-        for F in (StartPage, Page1, Page3, Page4):
+        for F in (StartPage, PreMajor, Core_course, Class_buttons, Theory,
+                  Systems, Paradigms):
             frame = F(self.container, self)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -49,7 +50,7 @@ class StartPage(tk.Frame):
         schedule = tk.PhotoImage(file='schedule.png')
         photoimage3 = schedule.subsample(3, 3)
         sche = tk.Label(self, image=photoimage3)
-        sche.photoimage3 = photoimage3  # To keep a reference to the image
+        sche.photoimage3 = photoimage3
 
         sche.pack(side=tk.TOP, padx=30, pady=10)
 
@@ -66,31 +67,33 @@ class StartPage(tk.Frame):
 
         button1 = tk.Button(self, height=63, width=142,
                             image=photoimage1,
-                            command=lambda: controller.show_frame(Page1), )
+                            command=lambda: controller.show_frame(PreMajor), )
         button1.image = photoimage1
         button1.pack(side="left", anchor="center")
 
 
-def next_button_click(controller, lb):
+def button_click(controller, lb, update_method):
     indices = check_selections(controller, lb)
-    controller.frames[Page4].update_which(indices)
-    controller.show_frame(Page4)
+    if update_method == 'update_which':
+        controller.frames[Class_buttons].update_which(indices)
+    elif update_method == 'update_2':
+        controller.frames[Class_buttons].update_2(indices)
+    elif update_method == 'update_3':
+        controller.frames[Class_buttons].update_3(indices)
+    elif update_method == 'update_4':
+        controller.frames[Class_buttons].update_4(indices)
+    elif update_method == 'update_5':
+        controller.frames[Class_buttons].update_5(indices)
+    controller.show_frame(Class_buttons)
 
 
-def new_button(controller, lb):
-    indices = check_selections(controller, lb)
-    controller.frames[Page4].update_2(indices)
-    controller.show_frame(Page4)
-
-
-class Page1(tk.Frame):
+class PreMajor(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
         label = ttk.Label(self,
                           text="Select all that you have taken or are "
-                               "currently taking.",
-                          font=small_font)
+                               "currently taking.", font=small_font)
         label.pack(anchor="n")
 
         data = ("CSC 110", "CSC 120", "CSC 210", "CSC 144", "CSC 244")
@@ -105,16 +108,16 @@ class Page1(tk.Frame):
         home.pack(side="left", pady=5, padx=2)
 
         next_ = ttk.Button(self, text="Next",
-                           command=lambda: next_button_click(controller,
-                                                             lb))
+                           command=lambda: button_click(controller, lb,
+                                                        'update_which'))
         next_.pack(side="left", pady=5, padx=20)
 
         other = ttk.Button(self, text="Click here if all taken",
-                           command=lambda: controller.show_frame(Page3))
+                           command=lambda: controller.show_frame(Core_course))
         other.pack(padx=2, side="right")
 
 
-class Page3(tk.Frame):
+class Core_course(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         label = ttk.Label(self, text="Select all that you have taken or are "
@@ -134,20 +137,122 @@ class Page3(tk.Frame):
         button2.pack(side="left", pady=5, padx=2)
 
         back_ = ttk.Button(self, text="Back",
-                           command=lambda: controller.show_frame(Page1))
+                           command=lambda: controller.show_frame(PreMajor))
         back_.pack(side="left", pady=5, padx=2)
 
         next_ = ttk.Button(self, text="Next",
-                           command=lambda: new_button(controller,
-                                                      lb))
+                           command=lambda: button_click(controller, lb,
+                                                        'update_2'))
         next_.pack(side="left", pady=5, padx=20)
 
         other = ttk.Button(self, text="Click here if all taken",
-                           command=lambda: controller.show_frame(Page1))
+                           command=lambda: controller.show_frame(Theory))
         other.pack(padx=2, side="right")
 
 
-class Page4(tk.Frame):
+class Theory(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        tk.Frame.__init__(self, parent)
+        label = ttk.Label(self, text="Select all that you have taken or are "
+                                     "currently taking.",
+                          font=small_font)
+        label.pack(anchor="n")
+        var = StringVar()
+        var.set("one")
+        data = ("CSC 445", "CSC 450", "CSC 473")
+        lb = Listbox(self, height=3, selectmode='multiple', font=medium_font)
+        for num in data:
+            lb.insert(END, num)
+        lb.pack(anchor=tk.CENTER)
+
+        home = ttk.Button(self, text="Home",
+                          command=lambda: controller.show_frame(StartPage))
+        home.pack(side="left", pady=5, padx=2)
+
+        back_ = ttk.Button(self, text="Back",
+                           command=lambda: controller.show_frame(PreMajor))
+        back_.pack(side="left", pady=5, padx=2)
+
+        next_ = ttk.Button(self, text="Next",
+                           command=lambda: button_click(controller, lb,
+                                                        'update_3'))
+        next_.pack(side="left", pady=5, padx=20)
+
+        other = ttk.Button(self, text="Click here if all taken",
+                           command=lambda: controller.show_frame(Systems))
+        other.pack(padx=2, side="right")
+
+
+class Systems(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        tk.Frame.__init__(self, parent)
+        label = ttk.Label(self, text="Select all that you have taken or are "
+                                     "currently taking.",
+                          font=small_font)
+        label.pack(anchor="n")
+        var = StringVar()
+        var.set("one")
+        data = ("CSC 452", "CSC 453")
+        lb = Listbox(self, height=2, selectmode='multiple', font=medium_font)
+        for num in data:
+            lb.insert(END, num)
+        lb.pack(anchor=tk.CENTER)
+
+        home = ttk.Button(self, text="Home",
+                          command=lambda: controller.show_frame(StartPage))
+        home.pack(side="left", pady=5, padx=2)
+
+        back_ = ttk.Button(self, text="Back",
+                           command=lambda: controller.show_frame(PreMajor))
+        back_.pack(side="left", pady=5, padx=2)
+
+        next_ = ttk.Button(self, text="Next",
+                           command=lambda: button_click(controller, lb,
+                                                        'update_4'))
+        next_.pack(side="left", pady=5, padx=20)
+
+        other = ttk.Button(self, text="Click here if all taken",
+                           command=lambda: controller.show_frame(Paradigms))
+        other.pack(padx=2, side="right")
+
+
+class Paradigms(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        tk.Frame.__init__(self, parent)
+        label = ttk.Label(self, text="Select all that you have taken or are "
+                                     "currently taking.",
+                          font=small_font)
+        label.pack(anchor="n")
+        var = StringVar()
+        var.set("one")
+        data = ("CSC 372", "CSC 422", "CSC 460")
+        lb = Listbox(self, height=3, selectmode='multiple', font=medium_font)
+        for num in data:
+            lb.insert(END, num)
+        lb.pack(anchor=tk.CENTER)
+
+        home = ttk.Button(self, text="Home",
+                          command=lambda: controller.show_frame(StartPage))
+        home.pack(side="left", pady=5, padx=2)
+
+        back_ = ttk.Button(self, text="Back",
+                           command=lambda: controller.show_frame(PreMajor))
+        back_.pack(side="left", pady=5, padx=2)
+
+        next_ = ttk.Button(self, text="Next",
+                           command=lambda: button_click(controller, lb,
+                                                        'update_5'))
+        next_.pack(side="left", pady=5, padx=20)
+
+        other = ttk.Button(self, text="Click here if all taken",
+                           command=lambda: controller.show_frame(PreMajor))
+        other.pack(padx=2, side="right")
+
+
+class Class_buttons(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
@@ -159,8 +264,8 @@ class Page4(tk.Frame):
                    command=lambda: controller.show_frame(StartPage)).pack(
             padx=2, anchor=tk.SW)
         ttk.Button(self, text="Back",
-                   command=lambda: controller.show_frame(Page1)).pack(padx=2,
-                                                                      anchor=tk.SW)
+                   command=lambda: controller.show_frame(PreMajor)).pack(padx=2,
+                                                                         anchor=tk.SW)
 
         self.description_frame = tk.Frame(self)
         self.description_frame.pack(pady=10)
@@ -193,13 +298,34 @@ class Page4(tk.Frame):
             button.pack(side="left", padx=5)
             self.description_buttons.append(button)
 
+    # Pre-major Courses
     def update_which(self, indices):
         self.update_data(indices, ["CSC 110", "CSC 120", "CSC 210", "CSC 144",
                                    "CSC 244"])
 
+    # Core Courses
     def update_2(self, indices):
         self.update_data(indices, ["CSC 252", "CSC 335", "CSC 345", "CSC 352",
                                    "CSC 380"])
+
+    # Theory Courses
+    def update_3(self, indices):
+        self.update_data(indices, ["CSC 445", "CSC 450", "CSC 473"])
+
+    # Systems Courses
+    def update_4(self, indices):
+        self.update_data(indices, ["CSC 452", "CSC 453"])
+
+    # Paradigm Courses
+    def update_5(self, indices):
+        self.update_data(indices, ["CSC 372", "CSC 422", "CSC 460"])
+
+    # Elective Courses
+    def update_6(self, indices):
+        self.update_data(indices, ["CSC 250", "CSC 337", "CSC 346", "317",
+                                   "CSC 425", "CSC 433", "CSC 436", "CSC 437",
+                                   "CSC 444", "CSC 447",  "CSC 466", "CSC 477",
+                                   "CSC 483", "CSC 480"])
 
     def show_description(self, value, my_dict):
         if value in my_dict:
