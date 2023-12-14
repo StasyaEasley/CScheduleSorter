@@ -13,6 +13,7 @@ extra_small_font = ("Helvetica", 15)
 class ScheduleApp(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
+        self.controller = None
         self.title("Schedule Sorter")
         self.class_dict = None
         self.container = tk.Frame(self)
@@ -47,12 +48,13 @@ class ScheduleApp(tk.Tk):
             self.set_current_page(prev_page)
             self.show_frame(prev_page)
 
-    #
     def get_next_page(self):
+        current_pre_major = self.frames[PreMajor].is_completed()
+        current_core_course = self.frames[Core_Course].is_completed()
         current_theory = self.frames[Theory].is_completed()
         current_systems = self.frames[Systems].is_completed()
         current_paradigms = self.frames[Paradigms].is_completed()
-
+        print("Current - PreMajor:", current_pre_major)
         print("Current - Theory:", current_theory)
         print("Current - Systems:", current_systems)
         print("Current - Paradigms:", current_paradigms)
@@ -66,6 +68,26 @@ class ScheduleApp(tk.Tk):
         elif current_paradigms:
             print("Next page: Electives")
             return Electives
+        elif current_pre_major:
+            selected_items = self.frames[Class_Buttons].selected_items.get(
+                self.frames[Class_Buttons].current_page_name, [])
+            print("Selected Items in get_next_page:", selected_items)
+            if "CSC 210" in selected_items or "CSC 244" in selected_items:
+                print("Next page: Core Courses")
+                return Core_Course
+            else:
+                print("Next page: Restart")
+                return Electives
+        elif current_core_course:
+            selected_items = self.frames[Class_Buttons].selected_items.get(
+                self.frames[Class_Buttons].current_page_name, [])
+            print("Selected Items in get_next_page:", selected_items)
+            if "CSC 345" in selected_items:
+                print("Next page: Theory")
+                return Theory
+            else:
+                print("Next page: Restart")
+                return Electives
         else:
             print("Next page: Restart")
             return Restart
@@ -139,7 +161,7 @@ def button_click(controller, lb, update_method):
 class PreMajor(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-
+        self.completed = False
         label = ttk.Label(self,
                           text="Select all that you have taken\n "
                                "    or are currently taking.", font=medium_font)
@@ -169,10 +191,17 @@ class PreMajor(tk.Frame):
                            command=lambda: controller.show_frame(Core_Course))
         other.pack(padx=2, side="right")
 
+    def is_completed(self):
+        return self.completed
+
+    def set_completion_status(self, status):
+        self.completed = status
+
 
 class Core_Course(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
+        self.completed = None
         label = ttk.Label(self,
                           text="Select all that you have taken\n "
                                "    or are currently taking.", font=medium_font)
@@ -206,6 +235,12 @@ class Core_Course(tk.Frame):
         other = ttk.Button(self, text="Click here if all taken",
                            command=lambda: controller.show_frame(Theory))
         other.pack(padx=2, side="right")
+
+    def is_completed(self):
+        return self.completed
+
+    def set_completion_status(self, status):
+        self.completed = status
 
 
 class Theory(tk.Frame):
@@ -369,11 +404,11 @@ class Electives(tk.Frame):
 
         var = StringVar()
         var.set("one")
-        data = ("CSC 250", "CSC 337", "CSC 346", "CSC 317",
+        data = ("CSC 337", "CSC 346", "CSC 317",
                 "CSC 425", "CSC 433", "CSC 436", "CSC 437",
                 "CSC 444", "CSC 447", "CSC 466", "CSC 477",
                 "CSC 483", "CSC 480")
-        lb = Listbox(self, height=14, selectmode='multiple', font=medium_font)
+        lb = Listbox(self, height=13, selectmode='multiple', font=medium_font)
         for num in data:
             lb.insert(END, num)
         lb.pack(anchor=tk.CENTER)
@@ -460,21 +495,22 @@ class Class_Buttons(tk.Frame):
         self.controller.show_frame(next_page)
 
     def update_data(self, indices, classes):
-        current_page_name = str(self.controller.current_page)
+        self.current_page_name = str(self.controller.current_page)
 
         selected_items = [classes[i] for i in indices]
-        self.selected_items[current_page_name] = selected_items
+        self.selected_items[self.current_page_name] = selected_items
 
         print(
-            f"Selections for {current_page_name}: {', '.join(selected_items)}")
-
+            f"Selections for {self.current_page_name}:"
+            f" {', '.join(selected_items)}")
+        self.selected_items[self.current_page_name] = selected_items
         self.selected_items[self.controller.current_page] = [classes[i] for i in
                                                              indices]
         descriptions = pd.read_csv('merged_data.tsv', sep='\t')
         descriptions_dict = descriptions.set_index('Class').to_dict(
             orient='index')
 
-        selected_values = self.selected_items.get(current_page_name, [])
+        selected_values = self.selected_items.get(self.current_page_name, [])
         not_selected_values = [classes[i] for i in range(len(classes)) if
                                i not in indices]
 
@@ -487,38 +523,51 @@ class Class_Buttons(tk.Frame):
              range(0, len(next_steps_text), line_break_interval)]
         )
 
-        self.label["text"] = "Taken: {}\n\nNext Steps: {}".format(taken_text,
-                                                                  next_steps_formatted)
-
+        self.label["text"] = "Taken:\n{}\n\nNext Steps:\n{}".format(
+            taken_text, next_steps_formatted)
+        self.label["justify"] = "center"
         for button in self.description_buttons:
             button.destroy()
 
         button_frame = tk.Frame(self.description_frame)
         button_frame.pack(pady=10)
         new_line_break = 5
-        for index, value in enumerate(not_selected_values):
+        for i, value in enumerate(not_selected_values):
             button = ttk.Button(button_frame, text=value,
                                 command=lambda v=value:
                                 self.show_description(v, descriptions_dict))
 
-            button.grid(row=index // new_line_break,
-                        column=index % new_line_break, padx=5, pady=5)
+            button.grid(row=i // new_line_break,
+                        column=i % new_line_break, padx=5, pady=5)
             self.description_buttons.append(button)
 
     # Pre-major Courses
     def update_which(self, indices):
         self.update_data(indices, ["CSC 110", "CSC 120", "CSC 210", "CSC 144",
                                    "CSC 244"])
+        self.controller.frames[PreMajor].set_completion_status(True)
+        self.controller.frames[Core_Course].set_completion_status(False)
+        self.controller.frames[Theory].set_completion_status(False)
+        self.controller.frames[Systems].set_completion_status(False)
+        self.controller.frames[Paradigms].set_completion_status(False)
+        self.controller.frames[Electives].set_completion_status(False)
 
     # Core Courses
     def update_2(self, indices):
         self.update_data(indices, ["CSC 252", "CSC 335", "CSC 345", "CSC 352",
                                    "CSC 380"])
-
+        self.controller.frames[PreMajor].set_completion_status(False)
+        self.controller.frames[Core_Course].set_completion_status(True)
+        self.controller.frames[Theory].set_completion_status(False)
+        self.controller.frames[Systems].set_completion_status(False)
+        self.controller.frames[Paradigms].set_completion_status(False)
+        self.controller.frames[Electives].set_completion_status(False)
     # Theory Courses
     def update_3(self, indices):
         self.update_data(indices, ["CSC 445", "CSC 450", "CSC 473"])
         # used for the Next button after classes are selected
+        self.controller.frames[PreMajor].set_completion_status(False)
+        self.controller.frames[Core_Course].set_completion_status(False)
         self.controller.frames[Theory].set_completion_status(True)
         self.controller.frames[Systems].set_completion_status(False)
         self.controller.frames[Paradigms].set_completion_status(False)
@@ -527,6 +576,8 @@ class Class_Buttons(tk.Frame):
     # Systems Courses
     def update_4(self, indices):
         self.update_data(indices, ["CSC 452", "CSC 453"])
+        self.controller.frames[PreMajor].set_completion_status(False)
+        self.controller.frames[Core_Course].set_completion_status(False)
         self.controller.frames[Theory].set_completion_status(False)
         self.controller.frames[Systems].set_completion_status(True)
         self.controller.frames[Paradigms].set_completion_status(False)
@@ -535,6 +586,8 @@ class Class_Buttons(tk.Frame):
     # Paradigm Courses
     def update_5(self, indices):
         self.update_data(indices, ["CSC 372", "CSC 422", "CSC 460"])
+        self.controller.frames[PreMajor].set_completion_status(False)
+        self.controller.frames[Core_Course].set_completion_status(False)
         self.controller.frames[Theory].set_completion_status(False)
         self.controller.frames[Systems].set_completion_status(False)
         self.controller.frames[Paradigms].set_completion_status(True)
@@ -542,10 +595,12 @@ class Class_Buttons(tk.Frame):
 
     # Elective Courses
     def update_6(self, indices):
-        self.update_data(indices, ["CSC 250", "CSC 337", "CSC 346", "CSC 317",
+        self.update_data(indices, ["CSC 337", "CSC 346", "CSC 317",
                                    "CSC 425", "CSC 433", "CSC 436", "CSC 437",
                                    "CSC 444", "CSC 447", "CSC 466", "CSC 477",
                                    "CSC 483", "CSC 480"])
+        self.controller.frames[PreMajor].set_completion_status(False)
+        self.controller.frames[Core_Course].set_completion_status(False)
         self.controller.frames[Theory].set_completion_status(False)
         self.controller.frames[Systems].set_completion_status(False)
         self.controller.frames[Paradigms].set_completion_status(False)
