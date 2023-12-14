@@ -72,11 +72,17 @@ class ScheduleApp(tk.Tk):
             selected_items = self.frames[Class_Buttons].selected_items.get(
                 self.frames[Class_Buttons].current_page_name, [])
             print("Selected Items in get_next_page:", selected_items)
-            if "CSC 210" in selected_items or "CSC 244" in selected_items:
+            if "CSC 210" in selected_items and "CSC 244" in selected_items:
                 print("Next page: Core Courses")
                 return Core_Course
+            elif "CSC 210" in selected_items:
+                print("Next page: Core Courses")
+                return Core_Course
+            elif not selected_items:
+                print("Next Page: Restart")
+                return Restart
             else:
-                print("Next page: Restart")
+                print("Next page: Electives")
                 return Electives
         elif current_core_course:
             selected_items = self.frames[Class_Buttons].selected_items.get(
@@ -86,7 +92,7 @@ class ScheduleApp(tk.Tk):
                 print("Next page: Theory")
                 return Theory
             else:
-                print("Next page: Restart")
+                print("Next page: Electives")
                 return Electives
         else:
             print("Next page: Restart")
@@ -458,12 +464,11 @@ class Class_Buttons(tk.Frame):
         self.label = ttk.Label(self, text="", font=small_font)
         self.label.pack(anchor=tk.CENTER)
         self.home_button = ttk.Button(self, text="Home",
-                                      command=lambda: controller.show_frame(
-                                          StartPage))
-        self.home_button.pack(in_=bottom, side=tk.LEFT, padx=5, pady=10)
+                                      command=self.go_home)
+        self.home_button.pack(in_=bottom, side=tk.LEFT, padx=5, pady=5)
 
         self.back_button = ttk.Button(self, text="Back",
-                                      command=self.controller.go_back)
+                                      command=self.go_back_2)
         self.back_button.pack(in_=bottom, side=tk.LEFT, padx=20)
 
         self.next_button = ttk.Button(self, text="Next", command=self.next_page)
@@ -486,19 +491,33 @@ class Class_Buttons(tk.Frame):
 
         self.selected_items = {}
 
+        self.all_selections = {}
+
     def clear_information(self):
         self.description_label["text"] = ""
+
+    def go_home(self):
+        self.all_selections.clear()
+        self.controller.show_frame(StartPage)
+        print(self.all_selections)
+
+    def go_back_2(self):
+        self.controller.go_back()
+        print(self.all_selections)
 
     def next_page(self):
         next_page = self.controller.get_next_page()
         self.controller.set_current_page(next_page)
         self.controller.show_frame(next_page)
+        print(self.all_selections)
 
     def update_data(self, indices, classes):
         self.current_page_name = str(self.controller.current_page)
 
         selected_items = [classes[i] for i in indices]
         self.selected_items[self.current_page_name] = selected_items
+
+        self.all_selections[self.current_page_name] = selected_items
 
         print(
             f"Selections for {self.current_page_name}:"
@@ -530,7 +549,7 @@ class Class_Buttons(tk.Frame):
             button.destroy()
 
         button_frame = tk.Frame(self.description_frame)
-        button_frame.pack(pady=10)
+        button_frame.pack()
         new_line_break = 5
         for i, value in enumerate(not_selected_values):
             button = ttk.Button(button_frame, text=value,
@@ -538,7 +557,7 @@ class Class_Buttons(tk.Frame):
                                 self.show_description(v, descriptions_dict))
 
             button.grid(row=i // new_line_break,
-                        column=i % new_line_break, padx=5, pady=5)
+                        column=i % new_line_break, padx=5)
             self.description_buttons.append(button)
 
     # Pre-major Courses
