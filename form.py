@@ -3,6 +3,7 @@ from tkinter import *
 from tkinter import ttk
 import pandas as pd
 
+xxtra_large = ("Rupee", 50)
 large_font = ("Rupee", 35)
 medium_font = ("Helvetica", 27)
 small_font = ("Helvetica", 20)
@@ -12,7 +13,6 @@ extra_small_font = ("Helvetica", 15)
 class ScheduleApp(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
-
         self.title("Schedule Sorter")
         self.class_dict = None
         self.container = tk.Frame(self)
@@ -37,6 +37,7 @@ class ScheduleApp(tk.Tk):
         frame = self.frames[cont]
         frame.tkraise()
         self.page_history.append(cont)
+        self.current_page = cont
 
     # used for back button after selecting classes
     def go_back(self):
@@ -82,7 +83,7 @@ class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
-        label = ttk.Label(self, text="CS Schedule Sorter", font=large_font)
+        label = ttk.Label(self, text="CS Schedule Sorter", font=xxtra_large)
         label.pack(side=tk.TOP)
 
         schedule = tk.PhotoImage(file='schedule.png')
@@ -92,22 +93,29 @@ class StartPage(tk.Frame):
 
         sche.pack(side=tk.TOP, padx=30, pady=10)
 
+        message = ttk.Label(self, text="A program designed to help advise "
+                                       "\n        UA CS majors on classes. "
+                                       "\n\n                Ready to start?",
+                            font=medium_font)
+        message.pack(side=tk.TOP)
+
         imag_end = tk.PhotoImage(file='exit_button.png')
         photoimage2 = imag_end.subsample(5, 5)
 
-        button2 = tk.Button(self, image=photoimage2, height=63, width=142,
-                            command=controller.destroy)
-        button2.image = photoimage2
-        button2.pack(side="left", anchor="center", padx=65)
+        exit_button = tk.Button(self, image=photoimage2, height=63, width=142,
+                                command=controller.destroy)
+        exit_button.image = photoimage2
+        exit_button.pack(side="left", anchor=tk.CENTER, padx=35)
 
         imag_start = tk.PhotoImage(file='start_button.png')
         photoimage1 = imag_start.subsample(5, 5)
 
-        button1 = tk.Button(self, height=63, width=142,
-                            image=photoimage1,
-                            command=lambda: controller.show_frame(PreMajor), )
-        button1.image = photoimage1
-        button1.pack(side="left", anchor="center")
+        start_button = tk.Button(self, height=63, width=142,
+                                 image=photoimage1,
+                                 command=lambda: controller.show_frame(
+                                     PreMajor), )
+        start_button.image = photoimage1
+        start_button.pack(side="right", anchor=tk.CENTER, padx=35)
         self.pack_propagate(False)
 
 
@@ -133,20 +141,20 @@ class PreMajor(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         label = ttk.Label(self,
-                          text="Select all that you have taken or are "
-                               "currently taking.", font=small_font)
-        label.pack(anchor="n")
+                          text="Select all that you have taken\n "
+                               "    or are currently taking.", font=medium_font)
+        label.pack(anchor=tk.CENTER)
 
         which_class = ttk.Label(self,
-                                text="Pre-Major Courses", font=medium_font)
-        which_class.pack(anchor="n")
+                                text="Pre-Major Courses", font=xxtra_large)
+        which_class.pack(anchor=tk.CENTER)
 
         data = ("CSC 110", "CSC 120", "CSC 210", "CSC 144", "CSC 244")
 
-        lb = Listbox(self, height=5, selectmode='multiple', font=medium_font)
+        lb = Listbox(self, height=5, selectmode='multiple', font=large_font)
         for num in data:
             lb.insert(END, num)
-        lb.pack(anchor=tk.CENTER, fill=BOTH)
+        lb.pack(anchor=tk.CENTER, expand=True)
 
         home = ttk.Button(self, text="Home",
                           command=lambda: controller.show_frame(StartPage))
@@ -165,22 +173,22 @@ class PreMajor(tk.Frame):
 class Core_Course(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        label = ttk.Label(self, text="Select all that you have taken or are "
-                                     "currently taking.",
-                          font=small_font)
+        label = ttk.Label(self,
+                          text="Select all that you have taken\n "
+                               "    or are currently taking.", font=medium_font)
         label.pack(anchor="n")
 
         which_class = ttk.Label(self,
-                                text="Core Courses Courses", font=medium_font)
+                                text="Core Courses", font=xxtra_large)
         which_class.pack(anchor="n")
 
         var = StringVar()
         var.set("one")
         data = ("CSC 252", "CSC 335", "CSC 345", "CSC 352", "CSC 380")
-        lb = Listbox(self, height=5, selectmode='multiple', font=medium_font)
+        lb = Listbox(self, height=5, selectmode='multiple', font=large_font)
         for num in data:
             lb.insert(END, num)
-        lb.pack(anchor=tk.CENTER, fill=BOTH)
+        lb.pack(anchor=tk.CENTER, expand=True)
 
         button2 = ttk.Button(self, text="Home",
                              command=lambda: controller.show_frame(StartPage))
@@ -204,22 +212,22 @@ class Theory(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         tk.Frame.__init__(self, parent)
-        label = ttk.Label(self, text="Select all that you have taken or are "
-                                     "currently taking.",
-                          font=small_font)
+        label = ttk.Label(self,
+                          text="Select all that you have taken\n "
+                               "    or are currently taking.", font=medium_font)
         label.pack(anchor="n")
 
         which_class = ttk.Label(self,
-                                text="Theory Courses", font=medium_font)
+                                text="Theory Courses", font=xxtra_large)
         which_class.pack(anchor="n")
 
         var = StringVar()
         var.set("one")
         data = ("CSC 445", "CSC 450", "CSC 473")
-        lb = Listbox(self, height=3, selectmode='multiple', font=medium_font)
+        lb = Listbox(self, height=3, selectmode='multiple', font=large_font)
         for num in data:
             lb.insert(END, num)
-        lb.pack(anchor=tk.CENTER)
+        lb.pack(anchor=tk.CENTER, expand=True)
 
         home = ttk.Button(self, text="Home",
                           command=lambda: controller.show_frame(StartPage))
@@ -251,22 +259,22 @@ class Systems(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         tk.Frame.__init__(self, parent)
-        label = ttk.Label(self, text="Select all that you have taken or are "
-                                     "currently taking.",
-                          font=small_font)
+        label = ttk.Label(self,
+                          text="Select all that you have taken\n "
+                               "    or are currently taking.", font=medium_font)
         label.pack(anchor="n")
 
         which_class = ttk.Label(self,
-                                text="Systems Courses", font=medium_font)
+                                text="Systems Courses", font=xxtra_large)
         which_class.pack(anchor="n")
 
         var = StringVar()
         var.set("one")
         data = ("CSC 452", "CSC 453")
-        lb = Listbox(self, height=2, selectmode='multiple', font=medium_font)
+        lb = Listbox(self, height=2, selectmode='multiple', font=large_font)
         for num in data:
             lb.insert(END, num)
-        lb.pack(anchor=tk.CENTER)
+        lb.pack(anchor=tk.CENTER, expand=True)
 
         home = ttk.Button(self, text="Home",
                           command=lambda: controller.show_frame(StartPage))
@@ -298,22 +306,22 @@ class Paradigms(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         tk.Frame.__init__(self, parent)
-        label = ttk.Label(self, text="Select all that you have taken or are "
-                                     "currently taking.",
-                          font=small_font)
+        label = ttk.Label(self,
+                          text="Select all that you have taken\n "
+                               "    or are currently taking.", font=medium_font)
         label.pack(anchor="n")
 
         which_class = ttk.Label(self,
-                                text="Paradigm Courses", font=medium_font)
+                                text="Paradigm Courses", font=xxtra_large)
         which_class.pack(anchor="n")
 
         var = StringVar()
         var.set("one")
         data = ("CSC 372", "CSC 422", "CSC 460")
-        lb = Listbox(self, height=3, selectmode='multiple', font=medium_font)
+        lb = Listbox(self, height=3, selectmode='multiple', font=large_font)
         for num in data:
             lb.insert(END, num)
-        lb.pack(anchor=tk.CENTER)
+        lb.pack(anchor=tk.CENTER, expand=True)
 
         home = ttk.Button(self, text="Home",
                           command=lambda: controller.show_frame(StartPage))
@@ -348,7 +356,7 @@ class Electives(tk.Frame):
         label = ttk.Label(self, text="Select all that you have taken or are "
                                      "currently taking.",
                           font=small_font)
-        label.pack(anchor="n")
+        label.pack(anchor=tk.CENTER, expand=True)
 
         which_class = ttk.Label(self,
                                 text="Elective Courses", font=medium_font)
@@ -398,7 +406,7 @@ class Restart(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         label = ttk.Label(self, text="Congrats!",
-                          font=large_font)
+                          font=xxtra_large)
         label.pack(anchor="n")
 
         home = ttk.Button(self, text="Restart",
@@ -409,21 +417,26 @@ class Restart(tk.Frame):
 class Class_Buttons(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-
+        bottom = Frame(self)
+        bottom.pack(side=tk.BOTTOM)
         self.controller = controller
         self.label = ttk.Label(self, text="", font=small_font)
-        self.label.pack(anchor="n")
+        self.label.pack(anchor=tk.CENTER)
         self.home_button = ttk.Button(self, text="Home",
                                       command=lambda: controller.show_frame(
                                           StartPage))
-        self.home_button.pack(padx=2, anchor=tk.SW)
+        self.home_button.pack(in_=bottom, side=tk.LEFT, padx=5, pady=10)
 
         self.back_button = ttk.Button(self, text="Back",
                                       command=self.controller.go_back)
-        self.back_button.pack(padx=2, anchor=tk.SW)
+        self.back_button.pack(in_=bottom, side=tk.LEFT, padx=20)
 
         self.next_button = ttk.Button(self, text="Next", command=self.next_page)
-        self.next_button.pack(padx=2, anchor=tk.SW)
+        self.next_button.pack(in_=bottom, side=tk.RIGHT, padx=5)
+
+        self.clear_button = ttk.Button(self, text="Clear",
+                                       command=self.clear_information)
+        self.clear_button.pack(in_=bottom, side=tk.RIGHT, padx=20)
 
         self.description_frame = tk.Frame(self)
         self.description_frame.pack(pady=10)
@@ -431,13 +444,15 @@ class Class_Buttons(tk.Frame):
         self.description_label = ttk.Label(self.description_frame, text="",
                                            wraplength=400, justify="left",
                                            font=extra_small_font)
-        self.description_label.pack(pady=10)
+        self.description_label.pack(pady=10, anchor=tk.CENTER)
 
         self.description_buttons = []
         self.completed = False
 
-        self.message = ttk.Label(self, text="", font=small_font)
-        self.label.pack(anchor="s")
+        self.selected_items = {}
+
+    def clear_information(self):
+        self.description_label["text"] = ""
 
     def next_page(self):
         next_page = self.controller.get_next_page()
@@ -445,25 +460,49 @@ class Class_Buttons(tk.Frame):
         self.controller.show_frame(next_page)
 
     def update_data(self, indices, classes):
+        current_page_name = str(self.controller.current_page)
+
+        selected_items = [classes[i] for i in indices]
+        self.selected_items[current_page_name] = selected_items
+
+        print(
+            f"Selections for {current_page_name}: {', '.join(selected_items)}")
+
+        self.selected_items[self.controller.current_page] = [classes[i] for i in
+                                                             indices]
         descriptions = pd.read_csv('merged_data.tsv', sep='\t')
         descriptions_dict = descriptions.set_index('Class').to_dict(
             orient='index')
 
-        selected_values = [classes[i] for i in indices]
+        selected_values = self.selected_items.get(current_page_name, [])
         not_selected_values = [classes[i] for i in range(len(classes)) if
                                i not in indices]
 
-        self.label["text"] = "Taken: {}\nNext Steps: {}".format(
-            ", ".join(selected_values), ", ".join(not_selected_values))
+        taken_text = ", ".join(selected_values)
+        next_steps_text = ", ".join(not_selected_values)
+
+        line_break_interval = 45
+        next_steps_formatted = "\n".join(
+            [next_steps_text[i:i + line_break_interval] for i in
+             range(0, len(next_steps_text), line_break_interval)]
+        )
+
+        self.label["text"] = "Taken: {}\n\nNext Steps: {}".format(taken_text,
+                                                                  next_steps_formatted)
 
         for button in self.description_buttons:
             button.destroy()
 
-        for value in not_selected_values:
-            button = ttk.Button(self, text=value, command=lambda v=value:
-            self.show_description(v, descriptions_dict))
+        button_frame = tk.Frame(self.description_frame)
+        button_frame.pack(pady=10)
+        new_line_break = 5
+        for index, value in enumerate(not_selected_values):
+            button = ttk.Button(button_frame, text=value,
+                                command=lambda v=value:
+                                self.show_description(v, descriptions_dict))
 
-            button.pack(side="left", padx=5)
+            button.grid(row=index // new_line_break,
+                        column=index % new_line_break, padx=5, pady=5)
             self.description_buttons.append(button)
 
     # Pre-major Courses
