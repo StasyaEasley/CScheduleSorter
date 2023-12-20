@@ -1,6 +1,6 @@
-*.pyc
-venv/
-button.py
-dict.py
-honorsproj101.py
-user_interface.py
+git rm --cached *.pyc
+git rm --cached venv/
+git rm --cached button.py
+git rm --cached dict.py
+git rm --cached honorsproj101.py
+git rm --cached user_interface.py
