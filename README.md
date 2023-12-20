@@ -47,6 +47,6 @@ This file, using the libraries pandas and BeautifulSoup, creates the merged_data
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/your-username/CSC110Honors.git
-   cd CSC110Honors
+   git clone https://github.com/StasyaEasley/CScheduleSorter.git
+   cd CScheduleSorter
 
