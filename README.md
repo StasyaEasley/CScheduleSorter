@@ -35,11 +35,15 @@ This file is a TSV file containing  information about each CS class, such as cla
 
 3. data_cs_courses.py
 
-This file, using the libraries pandas and BeautifulSoup, creates the merged_data.tsv file by parsing an HTML file containing all of the CS course catalog information.
+This file, using the libraries pandas and BeautifulSoup, creates the merged_data.tsv file by parsing an HTML file containing all of the CS course catalog information. Not necessary to the function of form.py.
 
-4. descriptions.tsv
+4. description.tsv
 
-Used by the data_cs_courses file to create the merged data file
+Used by the data_cs_courses file to create the merged data file. Contains descriptions. Not necessary to the function of form.py.
+
+5. course_info.tsv
+
+Used by the data_cs_courses file to create the merged data file. Contains the rest of the course info. Not necessary to the function of form.py.
 
 ## Dependencies
 
@@ -53,4 +57,5 @@ Used by the data_cs_courses file to create the merged data file
    ```bash
    git clone https://github.com/StasyaEasley/CScheduleSorter.git
    cd CScheduleSorter
+2. Run form.py
 
