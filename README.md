@@ -33,9 +33,13 @@ This file contains the main logic and design for the CS Schedule Sorter app. It 
 
 This file is a TSV file containing  information about each CS class, such as class code, title, description, etc. This data is used to display additional information when a user clicks on a specific class.
 
-4. data_cs_courses.py
+3. data_cs_courses.py
 
 This file, using the libraries pandas and BeautifulSoup, creates the merged_data.tsv file by parsing an HTML file containing all of the CS course catalog information.
+
+4. descriptions.tsv
+
+Used by the data_cs_courses file to create the merged data file
 
 ## Dependencies
 
