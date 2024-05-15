@@ -27,23 +27,23 @@ The CS Schedule Sorter is a GUI app built using Tkinter. It helps in the plannin
 
 1. form.py
 
-This file contains the main logic and design for the CS Schedule Sorter app. It uses the Tkinter library for the GUI. The program guides the user through different pages corresponding to different class types, in addition to saving the selections of users and using selections to direct users through the app.
+This file contains the main logic and design for the CS Schedule Sorter app. It uses the Tkinter library for the GUI. The program guides the user through different pages corresponding to different class types, in addition to saving the selections of users and using selections to direct users through the app. Uses data from merged_data.tsv. 
 
 2. merged_data.tsv
 
-This file is a TSV file containing  information about each CS class, such as class code, title, description, etc. This data is used to display additional information when a user clicks on a specific class.
+This file is a TSV file containing information about each CS class, such as class code, title, description, etc. This data is used in form.py to display additional information when a user clicks on a specific class.
 
 3. data_cs_courses.py
 
-This file, using the libraries pandas and BeautifulSoup, creates the merged_data.tsv file by parsing an HTML file containing all of the CS course catalog information. Not necessary to the function of form.py.
+This file, using the libraries pandas and BeautifulSoup, creates the merged_data.tsv file by parsing an HTML file containing all of the CS course catalog information. Creates two files: description.tsv, course_info.tsv. Then merges these to create merged_data.tsv. Not necessary to the function of form.py.
 
-4. description.tsv
+4. description.tsv, course_info.tsv
 
-Used by the data_cs_courses file to create the merged data file. Contains descriptions. Not necessary to the function of form.py.
+Used by the data_cs_courses file to create the merged data file. description.tsv contains descriptions. course_info.tsv contains the rest of the course info. Not necessary to the function of form.py.
 
-5. course_info.tsv
+5. start_button.png, exit_button.png, schedule.png
 
-Used by the data_cs_courses file to create the merged data file. Contains the rest of the course info. Not necessary to the function of form.py.
+Images for the UI.
 
 ## Dependencies
 
@@ -58,4 +58,8 @@ Used by the data_cs_courses file to create the merged data file. Contains the re
    git clone https://github.com/StasyaEasley/CScheduleSorter.git
    cd CScheduleSorter
 2. Run form.py
+
+## Screenshots
+
+
 
