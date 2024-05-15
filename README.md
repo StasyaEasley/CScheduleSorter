@@ -57,7 +57,7 @@ Images for the UI.
    ```bash
    git clone https://github.com/StasyaEasley/CScheduleSorter.git
    cd CScheduleSorter
-2. **Install Packages**
+2. **Install Packages**  
    for form.py
    ```bash
    pip install pandas
