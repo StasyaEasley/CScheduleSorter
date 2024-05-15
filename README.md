@@ -69,6 +69,6 @@ Images for the UI.
    pip install beautifulsoup4
    ```
 
-3. **RUN!**
+3. **RUN!**  
    Run form.py and/or data_cs_courses.py
 
