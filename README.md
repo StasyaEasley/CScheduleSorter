@@ -57,9 +57,18 @@ Images for the UI.
    ```bash
    git clone https://github.com/StasyaEasley/CScheduleSorter.git
    cd CScheduleSorter
-2. Run form.py
+2. **Install Packages**
+   for form.py
+   ```bash
+   pip install pandas
+   pip install tk
+   ```
+   
+   for the rest
+   ```bash
+   pip install beautifulsoup4
+   ```
 
-## Screenshots
-
-
+3. **RUN!**
+   Run form.py and/or data_cs_courses.py
 
